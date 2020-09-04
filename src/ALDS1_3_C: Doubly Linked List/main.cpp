@@ -22,6 +22,20 @@ void init() {
   nil->next = nil;
   nil->prev = nil;
 }
+//新しいNodeは後ろに後ろにつないでいくイメージ 番兵 -> new -> old -> 番兵
+void insert(int key) {
+  Node *x = (Node *)malloc(sizeof(Node));
+  x->key = key;
+  x->next = nil->next;
+  nil->next->prev = x;
+  nil->next = x;
+  x->prev = nil;
+}
+
+void deleteNode(Node *t) {}
+
+void deleteFirst() {}
+void deleteLast() {}
 
 int main() {
   cout << "HelloWorld" << endl;
