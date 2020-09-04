@@ -1,3 +1,12 @@
+// 連結リスト
+// 双方向連結リストはいくつかのポインタをつなぎ替えるだけだから、O(1)で済む ->
+// 要素を追加するところがわかっていれば、O(1)で間に削除・挿入できるね
+
+// 配列ではA[i]のように定数時間で指定した要素にアクセスできる。
+// リストでは要素を特定するためにポインタをたどる必要がある。そのため、N個の要素を含むリストに対する検索はO(N)のアルゴリズムになる
+// 双方向連結リストの戦闘・末尾の要素の削除はO(1)で行うことが出来るが、特定のKeyを持つノードの削除はリストの要素を順番にたどる必要があるため、O(N)の計算量
+// 探索と削除にO(N)の計算量が必要でリスト単体ではあまり実用性がないが、データ構造の部品として活かすことが出来る
+#include <cstring>
 #include <iostream>
 
 using namespace std;
@@ -22,7 +31,8 @@ void init() {
   nil->next = nil;
   nil->prev = nil;
 }
-//新しいNodeは後ろに後ろにつないでいくイメージ 番兵 -> new -> old -> 番兵
+// 新しいNodeは後ろにつないでいくイメージ 番兵 -> new -> old -> 番兵
+// リストの先頭に追加していく
 void insert(int key) {
   Node *x = (Node *)malloc(sizeof(Node));
   x->key = key;
@@ -32,12 +42,73 @@ void insert(int key) {
   x->prev = nil;
 }
 
-void deleteNode(Node *t) {}
+//探索が了して番兵が戻るか、該当するkeyを持つNodeが返る
+Node *listSearch(int key) {
+  Node *cur = nil->next;
+  while (cur != nil && cur->key != key) {
+    cur = cur->next;
+  }
+  return cur;
+}
 
-void deleteFirst() {}
-void deleteLast() {}
+// Nodeの前とNodeの後を変えるだけで済む
+void deleteNode(Node *t) {
+  // tが番兵の場合は処理しない
+  if (t == nil) {
+    return;
+  }
+  t->prev->next = t->next;
+  t->next->prev = t->prev;
+  free(t);
+}
+
+// 最新のNode
+// 先頭のNode
+void deleteFirst() { deleteNode(nil->next); }
+// 最初のNode
+void deleteLast() { deleteNode(nil->prev); }
+
+void deleteKey(int key) { deleteNode(listSearch(key)); }
+
+void printList() {
+  Node *cur = nil->next;
+  int isFirst = 0;
+  while (1) {
+    if (cur == nil) {
+      break;
+    }
+    if (isFirst++ > 0) {
+      printf(" ");
+    }
+    printf("%d", cur->key);
+    cur = cur->next;
+  }
+  printf("\n");
+  return;
+}
 
 int main() {
-  cout << "HelloWorld" << endl;
+  int n, key;
+  char command[20];
+  scanf("%d", &n);
+  init();
+  for (int i = 0; i < n; i++) {
+    scanf("%s %d", command, &key);
+    if (command[0] == 'i') {
+      insert(key);
+    } else if (command[0] == 'd') {
+      if (strlen(command) > 6) {
+        if (command[6] == 'F') {
+          deleteFirst();
+        } else if (command[6] == 'L') {
+          deleteLast();
+        }
+      } else {
+        deleteKey(key);
+      }
+    }
+  }
+
+  printList();
   return 0;
 }
