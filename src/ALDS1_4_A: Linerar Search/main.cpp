@@ -1,4 +1,4 @@
-// 線形探索
+// 線形探索（何も見ずに）
 #include <iostream>
 
 using namespace std;
